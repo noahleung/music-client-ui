@@ -45,5 +45,20 @@ export default {
     return HttpKit.get(`/user/guess`).then(
       res => res.data
     )
+  },
+  findAveragePoints (songsId) {
+    return HttpKit.get(`/visitor/find_average_points/${songsId}`).then(
+      res => res.data
+    )
+  },
+  findMyPoints (songsId) {
+    return HttpKit.get(`/user/find_my_points/${songsId}`).then(
+      res => res.data
+    )
+  },
+  giveMyPoints (songsId, points) {
+    return HttpKit.get(`/user/give_my_points/${songsId}/${points}`).then(
+      res => res.data
+    )
   }
 }

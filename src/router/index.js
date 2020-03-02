@@ -9,7 +9,7 @@ import Search from '@/views/search/Search'
 import Rank from '@/views/Rank'
 import LoginAndRegist from '@/views/LoginAndRegist'
 import MusicPlayer from '@/components/MusicPlayer'
-
+import Test from '@/views/test'
 Vue.use(Router)
 
 export default new Router({
@@ -61,6 +61,11 @@ export default new Router({
       path: '/LoginAndRegist',
       name: 'LoginAndRegist',
       component: LoginAndRegist
+    },
+    {
+      path: '/Test',
+      name: 'Test',
+      component: Test
     }
   ]
 })

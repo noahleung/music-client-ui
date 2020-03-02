@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--修改密码dialog-->
-    <el-dialog title="修改密码" :visible.sync="updatePasswordVisible" style="width: 60%;margin-left: 20%">
+    <el-dialog title="修改密码" :visible.sync="updatePasswordVisible" style="width: 60%;margin-left: 20%" :before-close="handleClose">
       <el-form :model="passwordDto">
         <el-form-item label="原密码" >
           <el-input v-model="passwordDto.beforePassword" show-password></el-input>
@@ -82,10 +82,13 @@ export default {
     }
   },
   methods: {
+    handleClose () {
+      this.changeUpdatePassword()
+    },
     guess () {
       let songsId = ''
       SongsApi.guess().then(data => {
-        if (data === '') {
+        if (data === 'none') {
           this.$notify({
             title: '',
             message: '您听的歌还不够多，无法进行推荐'
@@ -149,22 +152,22 @@ export default {
     updatePassword () {
       AccountApi.updatePassword(this.passwordDto).then(data => {
         if (data === 'success') {
-          AccountApi.logout().then(data => {
-            if (data === 'success') {
-              this.changeUpdatePassword()
-              this.checkLogin()
-              this.$message({
-                message: '修改密码成功，请重新登录',
-                type: 'success'
-              })
-            }
+          this.$message({
+            message: '修改密码成功，请重新登录',
+            type: 'success'
           })
+          this.changeUpdatePassword()
+          this.$store.commit('changeUsername', '')
+          this.$store.commit('changeName', '')
+        } else {
+          this.$message('原密码不正确，请重试')
         }
       })
     },
     logout () {
       AccountApi.logout().then(data => {
         if (data === 'success') {
+          this.$emit('child-stop')
           this.$store.commit('changeUsername', '')
           this.$store.commit('changeName', '')
           this.$router.push({name: 'Main'})
@@ -176,7 +179,7 @@ export default {
       this.$router.push({name: 'LoginAndRegist'})
     },
     search () {
-      if (this.$store.state.keywords === '') {
+      if (this.$store.state.keywords.trim() === '') {
         this.$message.error('请输入搜索的内容')
       } else {
         // this.$store.commit('changeKeywords', this.keywords)

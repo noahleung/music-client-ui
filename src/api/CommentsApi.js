@@ -15,5 +15,10 @@ export default {
     return HttpKit.post(`/user/add_report_comments`, reportCommentsDto).then(
       res => res.data
     )
+  },
+  delete (commentsId) {
+    return HttpKit.get(`/user/delete_comments/${commentsId}`).then(
+      res => res.data
+    )
   }
 }

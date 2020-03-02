@@ -17,8 +17,8 @@
     评论区
   </div>
   <div style="margin-top: 20px">
-    <el-input type="textarea" style="width: 50%" v-model="comments.content" maxlength="100" show-word-limit autosize></el-input>
-    <el-button type="success" size="small" @click="addComments()">提交</el-button>
+    <el-input type="textarea" style="width: 50%" v-model="comments.content" maxlength="100" show-word-limit autosize @change="checkContent()"></el-input>
+    <el-button type="success" size="small" @click="addComments()" :disabled="buttonDisable">提交</el-button>
   </div>
 
   <!--中间-->
@@ -32,8 +32,8 @@
 
     <div style="width: 90%">
       <span style="float: right;font-weight: bold;float: left">发表于：{{i.createAt}}</span>
-    <el-link type="primary" style="float: right" @click="openReportComments(i.id)" v-if="i.accountName === $store.state.account.name">删除</el-link>
-    <el-link type="primary" style="float: right" @click="openReportComments(i.id)" v-else>举报</el-link>
+    <el-link type="primary" style="float: right" @click="deleteComments(i.id)" v-if="i.accountName === $store.state.account.name">删除</el-link>
+    <el-link type="primary" style="float: right" @click="openReportComments(i.id)" v-else-if="$store.state.account.name">举报</el-link>
       <div style="clear: both"></div>
     </div>
     <div style="clear: both"></div>
@@ -67,6 +67,7 @@ export default {
         content: '',
         objectId: ''
       },
+      buttonDisable: true,
       // 被评论的歌曲或专辑id
       commentsList: [], // 存放着所有的评论
       reportCommentsDto: {
@@ -81,6 +82,22 @@ export default {
     }
   },
   methods: {
+    checkContent () {
+      if (this.comments.content.trim().length === 0) {
+        this.buttonDisable = true
+      } else {
+        this.buttonDisable = false
+      }
+    },
+    deleteComments (id) {
+      CommentsApi.delete(id).then(data => {
+        if (data === 'success') {
+          this.findComments()
+        } else {
+          this.$message.error('不是你的评论不能删除')
+        }
+      })
+    },
     addComments () {
       if (this.comments.content.trim() === '') {
         this.$message.error('输入内容不能为空')

@@ -15,7 +15,25 @@
 
       <span style="font-weight: bold;color: #9B9BA8">歌手：</span>
       <el-link type="primary" @click="goSingerDetails">{{music.singerName}}</el-link> <br/><br/>
+      <div v-if="$store.state.account.username">
+        <span style="font-weight: bold;color: #9B9BA8">我的评分：</span>
+        <el-rate
+          show-score
+        v-model="myPoints"
+        :colors="colors"
+        @change="giveMyPoints">
+      </el-rate> <br/><br/>
+      </div>
 
+      <div>
+        <span style="font-weight: bold;color: #9B9BA8">平均评分：</span>
+        <el-rate
+          v-model="averagePoints"
+          disabled
+          show-score
+          text-color="#ff9900"
+          score-template="{value}"></el-rate><br/><br/>
+      </div>
       <el-button icon="el-icon-video-play" size="small" type="success" @click="play()">播放</el-button>
     </div>
     <div style="clear: both"></div> <!-- 清除浮动 -->
@@ -38,7 +56,9 @@ export default {
   },
   data () {
     return {
-      id: '',
+      averagePoints: 0,
+      myPoints: 0,
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
       music: {
         id: '',
         name: '',
@@ -60,12 +80,33 @@ export default {
     },
     play () {
       this.$emit('child-event', this.music.id)
+    },
+    giveMyPoints () {
+      SongsApi.giveMyPoints(this.music.id, this.myPoints).then(data => {
+        if (data === 0) {
+          this.$message.error('你还没收听这首歌，无法评分')
+          this.myPoints = 0
+        } else {
+          this.findAveragePoints()
+        }
+      })
+    },
+    findMyPoints () {
+      if (this.$store.state.account.username) {
+        SongsApi.findMyPoints(this.music.id).then(data => {
+          this.myPoints = data
+        })
+      }
+    },
+    findAveragePoints () {
+      SongsApi.findAveragePoints(this.music.id).then(data => {
+        this.averagePoints = data
+      })
     }
   },
   mounted () {
     this.music.id = this.$route.query.id
     SongsApi.findSongsDtoById(this.music.id).then(data => {
-      console.log(data)
       this.music.id = data.id
       this.music.singerName = data.singerName
       this.music.albumName = data.albumName
@@ -73,6 +114,8 @@ export default {
       this.music.name = data.name
       this.music.singerId = data.singerId
       this.music.albumId = data.albumId
+      this.findAveragePoints()
+      this.findMyPoints()
     })
   }
 }

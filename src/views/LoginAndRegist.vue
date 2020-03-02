@@ -5,7 +5,7 @@
       <span style="font-weight: bold;font-size: 20px">用户登录</span>
       <el-form :model="account" style="margin-top: 15%">
         <el-form-item >
-          <el-input prefix-icon="el-icon-s-custom" v-model="account.username" placeholder="邮箱账号" ></el-input>
+          <el-input prefix-icon="el-icon-s-custom" v-model="account.username" placeholder="邮箱账号"></el-input>
         </el-form-item>
         <el-form-item >
           <el-input show-password prefix-icon="el-icon-lock" v-model="account.password" placeholder="密码" @keyup.enter.native="login()"></el-input>
@@ -14,7 +14,7 @@
 
         <el-form-item>
           <el-button type="success" style="width: 30%"  @click="openRegist()">注册</el-button>
-          <el-button  type="primary" @click="login()" style="width: 30%" @keyup.enter.native="login()">登录</el-button>
+          <el-button  type="primary" @click="login()" style="width: 30%">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -237,6 +237,8 @@ export default {
           this.$router.push({name: 'Main'})
         } else if (data.data === 'not exist') {
           this.resultTips = '账号不存在'
+        } else if (data.data === 'ban') {
+          this.resultTips = '账号被锁定'
         } else {
           this.resultTips = '账号或密码错误'
         }

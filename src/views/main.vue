@@ -15,7 +15,7 @@
   </div>
  <el-container>
    <el-header>
-     <head-menu @child-search="search" style="height: 80px"></head-menu>
+     <head-menu @child-search="search" @child-stop="stop" style="height: 80px"></head-menu>
    </el-header>
    <div style="width: 85%;margin: 0 auto;margin-top:35px;display: inline;min-height:300px;">
      <router-view @child-event="play" ref="Search"/>
@@ -63,6 +63,14 @@ export default {
     '$route': 'checkLogin'
   },
   methods: {
+    stop () {
+      this.music.id = ''
+      this.music.src = ''
+      this.music.title = ''
+      this.music.artist = ''
+      this.music.pic = ''
+      this.music.lrc = ''
+    },
     checkLogin () {
       LoginAndRegistApi.checkLogin().then(data => {
         if (data === 'not login') {

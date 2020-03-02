@@ -182,12 +182,16 @@ export default {
       this.search()
     },
     search () {
-      if (this.activeName === 'songs') {
-        this.songsSearch()
-      } else if (this.activeName === 'album') {
-        this.albumSearch()
+      if (this.keywords.trim() === '') {
+        this.$message.error('请输入搜索关键字')
       } else {
-        this.singerSearch()
+        if (this.activeName === 'songs') {
+          this.songsSearch()
+        } else if (this.activeName === 'album') {
+          this.albumSearch()
+        } else {
+          this.singerSearch()
+        }
       }
     },
     handleClick (tab, event) {
